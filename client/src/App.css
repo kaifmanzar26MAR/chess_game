@@ -1,0 +1,57 @@
+*{
+  padding:0px;
+  margin:0px;
+  box-sizing: border-box;
+}
+
+
+
+.game_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #000;
+}
+
+.game_bord {
+  display: grid;
+  grid-template-columns: repeat(8, 80px); /* 8 columns with 50px width each */
+  grid-template-rows: repeat(8, 80px);    /* 8 rows with 50px height each */
+  gap: 0;
+  border: 2px solid #000;
+}
+
+.row {
+  display: contents; /* Allows grid-based layout while keeping the row structure */
+}
+
+.col {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #000;
+  cursor: pointer;
+  transition: all .5s;
+}
+
+.col:nth-child(even) {
+  background-color: #f0d9b5; /* Light squares */
+}
+
+.col:nth-child(odd) {
+  background-color: #b58863; /* Dark squares */
+}
+
+/* Alternate colors for rows */
+.row:nth-child(even) .col:nth-child(odd),
+.row:nth-child(odd) .col:nth-child(even) {
+  background-color: #f0d9b5;
+}
+
+.row:nth-child(even) .col:nth-child(even),
+.row:nth-child(odd) .col:nth-child(odd) {
+  background-color: #b58863;
+}

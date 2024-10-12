@@ -79,7 +79,7 @@ const Game = () => {
     return false;
   };
 
-  // showing path for rook & 
+  // showing path for rook &
   const showUpperPath = (a, b, i, j) => {
     if (a < 0) return;
 
@@ -165,7 +165,103 @@ const Game = () => {
     }
   };
 
+  const digonallyLeftDown = (a, b, i, j) => {
+    // Check boundaries for an 8x8 board
+    if (b < 0 || a >= 8) return;
 
+    if (board[a][b].name !== "" && board[a][b].color === board[i][j].color) {
+      return;
+    }
+    const path_ele = document.getElementById(`${a}_${b}`);
+    if (path_ele) {
+      let tempPathArray = validPathArray;
+      tempPathArray.push({ i: a, j: b });
+      setValidPathArray(tempPathArray);
+      path_ele.classList.add("path_ele");
+
+      if (
+        board[a][b]?.name !== "" &&
+        board[a][b]?.color !== board[i][j].color
+      ) {
+        path_ele.style.backgroundColor = "red";
+        return;
+      } else {
+        path_ele.style.backgroundColor = "green";
+      }
+      digonallyLeftDown(a + 1, b - 1, i, j); // Move diagonally left-down
+    }
+  };
+  const digonallyLeftUp = (a, b, i, j) => {
+    // Check boundaries for an 8x8 board
+    if (b < 0 || a < 0) return;
+
+    if (board[a][b]?.name !== "" && board[a][b]?.color === board[i][j].color) {
+      return;
+    }
+    const path_ele = document.getElementById(`${a}_${b}`);
+    if (path_ele) {
+      let tempPathArray = validPathArray;
+      tempPathArray.push({ i: a, j: b });
+      setValidPathArray(tempPathArray);
+      path_ele.classList.add("path_ele");
+
+      if (board[a][b].name !== "" && board[a][b].color !== board[i][j].color) {
+        path_ele.style.backgroundColor = "red";
+        return;
+      } else {
+        path_ele.style.backgroundColor = "green";
+      }
+      digonallyLeftUp(a - 1, b - 1, i, j); // Move diagonally left-up
+    }
+  };
+  const digonallyRightDown = (a, b, i, j) => {
+    // Check boundaries for an 8x8 board
+    if (b >= 8 || a >= 8) return;
+
+    if (board[a][b].name !== "" && board[a][b].color === board[i][j].color) {
+      return;
+    }
+    const path_ele = document.getElementById(`${a}_${b}`);
+    if (path_ele) {
+      let tempPathArray = validPathArray;
+      tempPathArray.push({ i: a, j: b });
+      setValidPathArray(tempPathArray);
+      path_ele.classList.add("path_ele");
+
+      if (
+        board[a][b]?.name !== "" &&
+        board[a][b]?.color !== board[i][j].color
+      ) {
+        path_ele.style.backgroundColor = "red";
+        return;
+      } else {
+        path_ele.style.backgroundColor = "green";
+      }
+      digonallyRightDown(a + 1, b + 1, i, j); // Move diagonally right-down
+    }
+  };
+  const digonallyRightUp = (a, b, i, j) => {
+    if (b >= 8 || a < 0) return;
+
+    if (board[a][b]?.name !== "" && board[a][b]?.color === board[i][j].color) {
+      return;
+    }
+    const path_ele = document.getElementById(`${a}_${b}`);
+    if (path_ele) {
+      let tempPathArray = validPathArray;
+      tempPathArray.push({ i: a, j: b });
+      setValidPathArray(tempPathArray);
+      path_ele.classList.add("path_ele");
+
+      if (board[a][b].name !== "" && board[a][b].color !== board[i][j].color) {
+        path_ele.style.backgroundColor = "red";
+        return;
+      } else {
+        path_ele.style.backgroundColor = "green";
+      }
+      digonallyRightUp(a - 1, b + 1, i, j);
+    }
+  };
 
   const showPawnPath = (i, j) => {
     //clearing previous path
@@ -281,6 +377,91 @@ const Game = () => {
     showRightPath(i, j + 1, i, j);
   };
 
+  const showKnightPath = (i, j) => {
+    console.log("showing Knight Path");
+    digonallyRightUp(i - 1, j + 1, i, j);
+    digonallyRightDown(i + 1, j + 1, i, j);
+    digonallyLeftDown(i + 1, j - 1, i, j);
+    digonallyLeftUp(i - 1, j - 1, i, j);
+  };
+
+  const showQueenPath= (i, j) =>{
+    console.log("showing Queen Path");
+    digonallyRightUp(i - 1, j + 1, i, j);
+    digonallyRightDown(i + 1, j + 1, i, j);
+    digonallyLeftDown(i + 1, j - 1, i, j);
+    digonallyLeftUp(i - 1, j - 1, i, j);
+    showUpperPath(i - 1, j, i, j);
+    showLowerPath(i + 1, j, i, j);
+    showLeftPath(i, j - 1, i, j);
+    showRightPath(i, j + 1, i, j);
+  }
+
+  const showBishopPath = (i, j) => {
+    const knightMoves = [
+      { a: i - 2, b: j - 1 }, // up 2, left 1
+      { a: i - 2, b: j + 1 }, // up 2, right 1
+      { a: i - 1, b: j - 2 }, // up 1, left 2
+      { a: i - 1, b: j + 2 }, // up 1, right 2
+      { a: i + 1, b: j - 2 }, // down 1, left 2
+      { a: i + 1, b: j + 2 }, // down 1, right 2
+      { a: i + 2, b: j - 1 }, // down 2, left 1
+      { a: i + 2, b: j + 1 }  // down 2, right 1
+    ];
+  
+    knightMoves.forEach(move => {
+      const { a, b } = move;
+      if (a >= 0 && a < 8 && b >= 0 && b < 8 && (board[a][b].name === '' || board[a][b].color !== board[i][j].color)) { // Ensure within bounds
+        
+        const path_ele = document.getElementById(`${a}_${b}`);
+        if (path_ele) {
+          let tempPathArray = validPathArray;
+          tempPathArray.push({ i: a, j: b });
+          setValidPathArray(tempPathArray);
+          path_ele.classList.add("path_ele");
+  
+          if (board[a][b].name !== "" && board[a][b].color !== board[i][j].color) {
+            path_ele.style.backgroundColor = "red";
+          } else {
+            path_ele.style.backgroundColor = "green";
+          }
+        }
+      }
+    });
+  };
+  const showKingPath = (i, j) => {
+    const kingMoves = [
+      { a: i - 1, b: j - 1 }, // upper left
+      { a: i - 1, b: j },     // upper
+      { a: i - 1, b: j + 1 }, // upper right
+      { a: i, b: j - 1 },     // left
+      { a: i, b: j + 1 },     // right
+      { a: i + 1, b: j - 1 }, // lower left
+      { a: i + 1, b: j },     // lower
+      { a: i + 1, b: j + 1 }  // lower right
+    ];
+  
+    kingMoves.forEach(move => {
+      const { a, b } = move;
+      if (a >= 0 && a < 8 && b >= 0 && b < 8 && (board[a][b].name === '' || board[a][b].color !== board[i][j].color)) { 
+        const path_ele = document.getElementById(`${a}_${b}`);
+        if (path_ele) {
+          let tempPathArray = validPathArray;
+          tempPathArray.push({ i: a, j: b });
+          setValidPathArray(tempPathArray);
+          path_ele.classList.add("path_ele");
+  
+          if (board[a][b].name !== "" && board[a][b].color !== board[i][j].color) {
+            path_ele.style.backgroundColor = "red"; // Enemy piece (capturable)
+          } else if (board[a][b].name === "") {
+            path_ele.style.backgroundColor = "green"; // Empty square
+          }
+        }
+      }
+    });
+  };
+  
+
   const showPath = (i, j) => {
     const peice = board[i][j];
     console.log(peice.name);
@@ -290,6 +471,18 @@ const Game = () => {
         break;
       case "Rook":
         showRookPath(i, j);
+        break;
+      case "Knight":
+        showKnightPath(i, j);
+        break;
+      case "Queen":
+        showQueenPath(i, j);
+        break;
+      case "Bishop":
+        showBishopPath(i, j);
+        break;
+      case "King":
+        showKingPath(i, j);
         break;
     }
   };

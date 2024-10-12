@@ -93,10 +93,10 @@ const Game = () => {
       setValidPathArray(tempPathArray);
       path_ele.classList.add("path_ele");
       if (board[a][b].name !== "" && board[a][b].color !== board[i][j].color) {
-        path_ele.style.backgroundColor = "red";
+        path_ele.style.backgroundColor = "#c6432d";
         return;
       } else {
-        path_ele.style.backgroundColor = "green";
+        path_ele.style.backgroundColor = "#85e285";
       }
       showUpperPath(a - 1, b, i, j);
     }
@@ -114,10 +114,10 @@ const Game = () => {
       setValidPathArray(tempPathArray);
       path_ele.classList.add("path_ele");
       if (board[a][b].name !== "" && board[a][b].color !== board[i][j].color) {
-        path_ele.style.backgroundColor = "red";
+        path_ele.style.backgroundColor = "#c6432d";
         return;
       } else {
-        path_ele.style.backgroundColor = "green";
+        path_ele.style.backgroundColor = "#85e285";
       }
       showLowerPath(a + 1, b, i, j);
     }
@@ -135,10 +135,10 @@ const Game = () => {
       setValidPathArray(tempPathArray);
       path_ele.classList.add("path_ele");
       if (board[a][b].name !== "" && board[a][b].color !== board[i][j].color) {
-        path_ele.style.backgroundColor = "red";
+        path_ele.style.backgroundColor = "#c6432d";
         return;
       } else {
-        path_ele.style.backgroundColor = "green";
+        path_ele.style.backgroundColor = "#85e285";
       }
       showLeftPath(a, b - 1, i, j);
     }
@@ -156,10 +156,10 @@ const Game = () => {
       setValidPathArray(tempPathArray);
       path_ele.classList.add("path_ele");
       if (board[a][b].name !== "" && board[a][b].color !== board[i][j].color) {
-        path_ele.style.backgroundColor = "red";
+        path_ele.style.backgroundColor = "#c6432d";
         return;
       } else {
-        path_ele.style.backgroundColor = "green";
+        path_ele.style.backgroundColor = "#85e285";
       }
       showRightPath(a, b + 1, i, j);
     }
@@ -183,10 +183,10 @@ const Game = () => {
         board[a][b]?.name !== "" &&
         board[a][b]?.color !== board[i][j].color
       ) {
-        path_ele.style.backgroundColor = "red";
+        path_ele.style.backgroundColor = "#c6432d";
         return;
       } else {
-        path_ele.style.backgroundColor = "green";
+        path_ele.style.backgroundColor = "#85e285";
       }
       digonallyLeftDown(a + 1, b - 1, i, j); // Move diagonally left-down
     }
@@ -206,10 +206,10 @@ const Game = () => {
       path_ele.classList.add("path_ele");
 
       if (board[a][b].name !== "" && board[a][b].color !== board[i][j].color) {
-        path_ele.style.backgroundColor = "red";
+        path_ele.style.backgroundColor = "#c6432d";
         return;
       } else {
-        path_ele.style.backgroundColor = "green";
+        path_ele.style.backgroundColor = "#85e285";
       }
       digonallyLeftUp(a - 1, b - 1, i, j); // Move diagonally left-up
     }
@@ -232,10 +232,10 @@ const Game = () => {
         board[a][b]?.name !== "" &&
         board[a][b]?.color !== board[i][j].color
       ) {
-        path_ele.style.backgroundColor = "red";
+        path_ele.style.backgroundColor = "#c6432d";
         return;
       } else {
-        path_ele.style.backgroundColor = "green";
+        path_ele.style.backgroundColor = "#85e285";
       }
       digonallyRightDown(a + 1, b + 1, i, j); // Move diagonally right-down
     }
@@ -254,10 +254,10 @@ const Game = () => {
       path_ele.classList.add("path_ele");
 
       if (board[a][b].name !== "" && board[a][b].color !== board[i][j].color) {
-        path_ele.style.backgroundColor = "red";
+        path_ele.style.backgroundColor = "#c6432d";
         return;
       } else {
-        path_ele.style.backgroundColor = "green";
+        path_ele.style.backgroundColor = "#85e285";
       }
       digonallyRightUp(a - 1, b + 1, i, j);
     }
@@ -285,9 +285,6 @@ const Game = () => {
           break;
         }
         // checkOponentforRock(index,j);
-        if (path_ele) {
-          path_ele.classList.add("path_ele");
-        }
 
         tempPathArray.push({ i: index, j });
         if (
@@ -300,7 +297,7 @@ const Game = () => {
             const opponent = document.getElementById(`${index}_${j - 1}`);
             if (opponent) {
               opponent.classList.add("path_ele");
-              opponent.style.backgroundColor = "red";
+              opponent.style.backgroundColor = "#c6432d";
               tempPathArray.push({ i: index, j: j - 1 });
               console.log("oponent detected in Pawn path");
             }
@@ -309,14 +306,17 @@ const Game = () => {
             const opponent = document.getElementById(`${index}_${j + 1}`);
             if (opponent) {
               opponent.classList.add("path_ele");
-              opponent.style.backgroundColor = "red";
+              opponent.style.backgroundColor = "#c6432d";
               tempPathArray.push({ i: index, j: j + 1 });
               console.log("oponent detected in Pawn path");
             }
           }
         }
         if (board[index][j].name === "") {
-          path_ele.style.backgroundColor = "green";
+          if (path_ele) {
+            path_ele.classList.add("path_ele");
+          }
+          path_ele.style.backgroundColor = "#85e285";
         }
       }
     } else {
@@ -330,9 +330,7 @@ const Game = () => {
         // checkOponentforRock(index,j);
         const path_ele = document.getElementById(`${index}_${j}`);
 
-        if (path_ele) {
-          path_ele.classList.add("path_ele");
-        }
+       
         tempPathArray.push({ i: index, j });
         if (
           (board[index][j - 1]?.name !== "" &&
@@ -344,7 +342,7 @@ const Game = () => {
             const opponent = document.getElementById(`${index}_${j - 1}`);
             if (opponent) {
               opponent.classList.add("path_ele");
-              opponent.style.backgroundColor = "red";
+              opponent.style.backgroundColor = "#c6432d";
               tempPathArray.push({ i: index, j: j - 1 });
               console.log("oponent detected in Pawn path");
             }
@@ -353,14 +351,17 @@ const Game = () => {
             const opponent = document.getElementById(`${index}_${j + 1}`);
             if (opponent) {
               opponent.classList.add("path_ele");
-              opponent.style.backgroundColor = "red";
+              opponent.style.backgroundColor = "#c6432d";
               tempPathArray.push({ i: index, j: j + 1 });
               console.log("oponent detected in Pawn path");
             }
           }
         }
         if (board[index][j].name === "") {
-          path_ele.style.backgroundColor = "green";
+          if (path_ele) {
+            path_ele.classList.add("path_ele");
+          }
+          path_ele.style.backgroundColor = "#85e285";
         }
       }
     }
@@ -385,7 +386,7 @@ const Game = () => {
     digonallyLeftUp(i - 1, j - 1, i, j);
   };
 
-  const showQueenPath= (i, j) =>{
+  const showQueenPath = (i, j) => {
     console.log("showing Queen Path");
     digonallyRightUp(i - 1, j + 1, i, j);
     digonallyRightDown(i + 1, j + 1, i, j);
@@ -395,7 +396,7 @@ const Game = () => {
     showLowerPath(i + 1, j, i, j);
     showLeftPath(i, j - 1, i, j);
     showRightPath(i, j + 1, i, j);
-  }
+  };
 
   const showBishopPath = (i, j) => {
     const knightMoves = [
@@ -406,24 +407,34 @@ const Game = () => {
       { a: i + 1, b: j - 2 }, // down 1, left 2
       { a: i + 1, b: j + 2 }, // down 1, right 2
       { a: i + 2, b: j - 1 }, // down 2, left 1
-      { a: i + 2, b: j + 1 }  // down 2, right 1
+      { a: i + 2, b: j + 1 }, // down 2, right 1
     ];
-  
-    knightMoves.forEach(move => {
+
+    knightMoves.forEach((move) => {
       const { a, b } = move;
-      if (a >= 0 && a < 8 && b >= 0 && b < 8 && (board[a][b].name === '' || board[a][b].color !== board[i][j].color)) { // Ensure within bounds
-        
+      if (
+        a >= 0 &&
+        a < 8 &&
+        b >= 0 &&
+        b < 8 &&
+        (board[a][b].name === "" || board[a][b].color !== board[i][j].color)
+      ) {
+        // Ensure within bounds
+
         const path_ele = document.getElementById(`${a}_${b}`);
         if (path_ele) {
           let tempPathArray = validPathArray;
           tempPathArray.push({ i: a, j: b });
           setValidPathArray(tempPathArray);
           path_ele.classList.add("path_ele");
-  
-          if (board[a][b].name !== "" && board[a][b].color !== board[i][j].color) {
-            path_ele.style.backgroundColor = "red";
+
+          if (
+            board[a][b].name !== "" &&
+            board[a][b].color !== board[i][j].color
+          ) {
+            path_ele.style.backgroundColor = "#c6432d";
           } else {
-            path_ele.style.backgroundColor = "green";
+            path_ele.style.backgroundColor = "#85e285";
           }
         }
       }
@@ -432,35 +443,43 @@ const Game = () => {
   const showKingPath = (i, j) => {
     const kingMoves = [
       { a: i - 1, b: j - 1 }, // upper left
-      { a: i - 1, b: j },     // upper
+      { a: i - 1, b: j }, // upper
       { a: i - 1, b: j + 1 }, // upper right
-      { a: i, b: j - 1 },     // left
-      { a: i, b: j + 1 },     // right
+      { a: i, b: j - 1 }, // left
+      { a: i, b: j + 1 }, // right
       { a: i + 1, b: j - 1 }, // lower left
-      { a: i + 1, b: j },     // lower
-      { a: i + 1, b: j + 1 }  // lower right
+      { a: i + 1, b: j }, // lower
+      { a: i + 1, b: j + 1 }, // lower right
     ];
-  
-    kingMoves.forEach(move => {
+
+    kingMoves.forEach((move) => {
       const { a, b } = move;
-      if (a >= 0 && a < 8 && b >= 0 && b < 8 && (board[a][b].name === '' || board[a][b].color !== board[i][j].color)) { 
+      if (
+        a >= 0 &&
+        a < 8 &&
+        b >= 0 &&
+        b < 8 &&
+        (board[a][b].name === "" || board[a][b].color !== board[i][j].color)
+      ) {
         const path_ele = document.getElementById(`${a}_${b}`);
         if (path_ele) {
           let tempPathArray = validPathArray;
           tempPathArray.push({ i: a, j: b });
           setValidPathArray(tempPathArray);
           path_ele.classList.add("path_ele");
-  
-          if (board[a][b].name !== "" && board[a][b].color !== board[i][j].color) {
-            path_ele.style.backgroundColor = "red"; // Enemy piece (capturable)
+
+          if (
+            board[a][b].name !== "" &&
+            board[a][b].color !== board[i][j].color
+          ) {
+            path_ele.style.backgroundColor = "#c6432d"; // Enemy piece (capturable)
           } else if (board[a][b].name === "") {
-            path_ele.style.backgroundColor = "green"; // Empty square
+            path_ele.style.backgroundColor = "#85e285"; // Empty square
           }
         }
       }
     });
   };
-  
 
   const showPath = (i, j) => {
     const peice = board[i][j];
@@ -491,6 +510,10 @@ const Game = () => {
     const prev_i = selectedPiece.i,
       prev_j = selectedPiece.j;
     if (prev_i !== null && prev_j !== null) {
+      const prevElement = document.getElementById(`${prev_i}_${prev_j}`);
+      if (prevElement) {
+        prevElement.classList.remove("selected");
+      }
       if (
         board[i][j].color !== board[prev_i][prev_j].color &&
         !isCorrectPath(i, j)
@@ -498,15 +521,18 @@ const Game = () => {
         //checking the valid paths
         console.log("not valid path");
         setSelectedPiece((prev) => ({ ...prev, i: null, j: null }));
+        document.getElementById(`${i}_${j}`).classList.remove("selected");
         clearPathMarks();
         return;
       } else if (board[i][j].color === board[prev_i][prev_j].color) {
         // if both form the same color
         setSelectedPiece((prev) => ({ ...prev, i: null, j: null }));
+        document.getElementById(`${i}_${j}`).classList.remove("selected");
         clearPathMarks();
         console.log("same color");
-        console.log("setting i,j");
+        console.log("setting i,j", i, j);
         setSelectedPiece({ i, j });
+        document.getElementById(`${i}_${j}`).classList.add("selected");
         showPath(i, j);
         return;
       } else if (
@@ -524,6 +550,7 @@ const Game = () => {
         clearPathMarks();
         console.log("opposit color kill other");
         setSelectedPiece((prev) => ({ ...prev, i: null, j: null }));
+        document.getElementById(`${i}_${j}`).classList.remove("selected");
         return;
       } else {
         // path is empty;
@@ -541,6 +568,7 @@ const Game = () => {
       }
       console.log("setting i,j", i, j);
       setSelectedPiece({ i, j });
+      document.getElementById(`${i}_${j}`).classList.add("selected");
       showPath(i, j);
     }
   };

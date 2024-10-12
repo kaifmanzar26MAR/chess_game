@@ -55,3 +55,20 @@
 .row:nth-child(odd) .col:nth-child(odd) {
   background-color: #b58863;
 }
+.path_ele {
+  background-color: #c8ff75;
+  
+  box-shadow: 
+    inset 0 0 10px #e9ffc7, /* Soft white inner glow */
+    inset 0 0 20px #e9ffc7, /* Slightly larger inner glow */
+    inset 0 0 30px #e9ffc7; /* Faint outer shine */
+  transition: box-shadow 0.3s ease; /* Smooth transition for hover effects */
+}
+.selected{
+  
+  box-shadow: 
+    inset 0 0 10px #ffa303, /* Soft white inner glow */
+    inset 0 0 20px #ffa303, /* Slightly larger inner glow */
+    inset 0 0 30px #ffa303; /* Faint outer shine */
+  transition: box-shadow 0.3s ease;
+}

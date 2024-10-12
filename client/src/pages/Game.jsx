@@ -261,7 +261,8 @@ const Game = () => {
       }
       digonallyRightUp(a - 1, b + 1, i, j);
     }
-  };
+  }
+
 
   const showPawnPath = (i, j) => {
     //clearing previous path

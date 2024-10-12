@@ -18,7 +18,7 @@ const Game = () => {
     j: null,
   });
 
-  const [validPathArray, setValidPathArray]= useState([]);
+  const [validPathArray, setValidPathArray] = useState([]);
 
   const [board, setBoard] = useState([
     [
@@ -59,19 +59,22 @@ const Game = () => {
     ],
   ]);
 
-  const clearPathMarks = ()=>{
-    console.log('clearing path');
+  const clearPathMarks = () => {
+    console.log("clearing path");
     setValidPathArray([]);
-    const all_path_ele = document.getElementsByClassName('path_ele');
+    const all_path_ele = document.getElementsByClassName("path_ele");
     Array.from(all_path_ele).forEach((ele) => {
-      ele.style.backgroundColor = '';
+      ele.style.backgroundColor = "";
       ele.classList.remove("path_ele");
     });
-  }
+  };
+
   const showRookPath = (i, j) => {
     //clearing previous path
     clearPathMarks();
-    console.log('showing rock path');
+    console.log("showing rock path");
+    
+
     const next_index = (a, b) => {
       if (board[i][j].color === "white") {
         return a - b;
@@ -79,43 +82,91 @@ const Game = () => {
         return a + b;
       }
     };
-    let tempPathArray=[];
+    let tempPathArray = [];
     if (i == 1 || i == 6) {
       //on start possition
       for (let k = 1; k <= 2; k++) {
         const index = next_index(i, k);
         const path_ele = document.getElementById(`${index}_${j}`);
-        if (path_ele) {
-          path_ele.classList.add("path_ele");
-          
-        }
         if (index >= board.length || index < 0) {
           break;
         }
-        tempPathArray.push({i:index, j});
-        if (board[index][j].name !== "") {
-          path_ele.style.backgroundColor = "red";
-          break;
-        } else {
+        // checkOponentforRock(index,j);
+        if (path_ele) {
+          path_ele.classList.add("path_ele");
+        }
+        
+        tempPathArray.push({ i: index, j });
+        if (
+          (board[index][j - 1]?.name !== "" &&
+            board[index][j - 1]?.color !== board[i][j].color) ||
+          (board[index][j + 1]?.name !== "" &&
+            board[index][j + 1]?.color !== board[i][j].color)
+        ) {
+          if (board[index][j - 1]?.name !== "") {
+            const opponent = document.getElementById(`${index}_${j - 1}`);
+            if(opponent){
+              opponent.classList.add("path_ele");
+              opponent.style.backgroundColor = "red";
+              tempPathArray.push({ i: index, j: j-1 });
+              console.log('oponent detected in rock path');
+            }
+          }
+          if (board[index][j + 1]?.name !== "") {
+            const opponent = document.getElementById(`${index}_${j + 1}`);
+            if(opponent){
+              opponent.classList.add("path_ele");
+              opponent.style.backgroundColor = "red";
+              tempPathArray.push({ i: index, j: j+1 });
+              console.log('oponent detected in rock path');
+            }
+          }
+        }
+        if (board[index][j].name === "") {
           path_ele.style.backgroundColor = "green";
         }
       }
     } else {
       for (let k = 1; k <= 1; k++) {
         const index = next_index(i, k);
-        const path_ele = document.getElementById(`${index}_${j}`);
-        if (path_ele) {
-          path_ele.classList.add("path_ele");
-          
-        }
+        // checking for opponent
         if (index >= board.length || index < 0) {
           break;
         }
-        tempPathArray.push({i:index, j});
-        if (board[index][j].name !== "") {
-          path_ele.style.backgroundColor = "red";
-          break;
-        } else {
+
+        // checkOponentforRock(index,j);
+        const path_ele = document.getElementById(`${index}_${j}`);
+
+        if (path_ele) {
+          path_ele.classList.add("path_ele");
+        }
+        tempPathArray.push({ i: index, j });
+        if (
+          (board[index][j - 1]?.name !== "" &&
+            board[index][j - 1]?.color !== board[i][j].color) ||
+          (board[index][j + 1]?.name !== "" &&
+            board[index][j + 1]?.color !== board[i][j].color)
+        ) {
+          if (board[index][j - 1]?.name !== "") {
+            const opponent = document.getElementById(`${index}_${j - 1}`);
+            if(opponent){
+              opponent.classList.add("path_ele");
+              opponent.style.backgroundColor = "red";
+              tempPathArray.push({ i: index, j: j-1 });
+              console.log('oponent detected in rock path');
+            }
+          }
+          if (board[index][j + 1]?.name !== "") {
+            const opponent = document.getElementById(`${index}_${j + 1}`);
+            if(opponent){
+              opponent.classList.add("path_ele");
+              opponent.style.backgroundColor = "red";
+              tempPathArray.push({ i: index, j: j+1 });
+              console.log('oponent detected in rock path');
+            }
+          }
+        }
+        if (board[index][j].name === "") {
           path_ele.style.backgroundColor = "green";
         }
       }
@@ -132,53 +183,67 @@ const Game = () => {
         break;
     }
   };
-  const isCorrectPath =(i, j)=>{
-    if(validPathArray.some(path => path.i === i && path.j === j)){
-      console.log('valid path');
+  const isCorrectPath = (i, j) => {
+    if (validPathArray.some((path) => path.i === i && path.j === j)) {
+      console.log("valid path");
       return true;
     }
-    console.log('not valid path');
+    console.log("not valid path");
     return false;
-  }
+  };
+
   const action = (i, j) => {
-
-    const prev_i = selectedPiece.i, prev_j = selectedPiece.j;
-    if(prev_i !==null && prev_j !== null){
-
-      if(!isCorrectPath(i, j) && board[i][j].color !== board[prev_i][prev_j].color){ //checking the valid paths
-        console.log('not valid path');
+    const prev_i = selectedPiece.i,
+      prev_j = selectedPiece.j;
+    if (prev_i !== null && prev_j !== null) {
+      if (
+        !isCorrectPath(i, j) &&
+        board[i][j].color !== board[prev_i][prev_j].color
+      ) {
+        //checking the valid paths
+        console.log("not valid path");
         setSelectedPiece((prev) => ({ ...prev, i: null, j: null }));
         clearPathMarks();
         return;
-      }else if(board[i][j].color === board[prev_i][prev_j].color){ // if both form the same color
+      } else if (board[i][j].color === board[prev_i][prev_j].color) {
+        // if both form the same color
         setSelectedPiece((prev) => ({ ...prev, i: null, j: null }));
         clearPathMarks();
-        console.log('same color');
-        console.log('setting i,j');
-        setSelectedPiece({i,j});
-        showPath(i,j);
+        console.log("same color");
+        console.log("setting i,j");
+        setSelectedPiece({ i, j });
+        showPath(i, j);
         return;
-      }else if(board[i][j].name != '' && board[i][j].color !== board[prev_i][prev_j].color){ // if both of opposit color
+      } else if (
+        board[i][j].name != "" &&
+        board[i][j].color !== board[prev_i][prev_j].color
+      ) {
+        // if both of opposit color
         board[i][j] = board[prev_i][prev_j];
-        board[prev_i][prev_j]={ name: "", color: "", background: "", icon: "" };
+        board[prev_i][prev_j] = {
+          name: "",
+          color: "",
+          background: "",
+          icon: "",
+        };
         clearPathMarks();
-        console.log('opposit color kill other');
+        console.log("opposit color kill other");
         setSelectedPiece((prev) => ({ ...prev, i: null, j: null }));
         return;
-      }else{ // path is empty;
-        let tempBoard= board[i][j];
+      } else {
+        // path is empty;
+        let tempBoard = board[i][j];
         board[i][j] = board[prev_i][prev_j];
-        board[prev_i][prev_j]=tempBoard;
-        console.log('forward moving');
+        board[prev_i][prev_j] = tempBoard;
+        console.log("forward moving");
         clearPathMarks();
         setSelectedPiece((prev) => ({ ...prev, i: null, j: null }));
         return;
       }
-      
-    }else{
-      console.log('setting i,j');
-      setSelectedPiece({i,j});
-      showPath(i,j);
+    } else {
+      console.log("setting i,j", i, j);
+      setSelectedPiece({ i, j });
+      showPath(i, j);
     }
   };
 

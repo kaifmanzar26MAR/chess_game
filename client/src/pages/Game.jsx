@@ -1,5 +1,4 @@
-import React, { useRef, useState } from "react";
-
+import React, { useState } from "react";
 const Game = () => {
   // const board = [
   //   ["Rock", "Bishop", "Knight", "Queen", "King", "Knight", "Bishop", "Rock"],
@@ -13,14 +12,10 @@ const Game = () => {
   // ];
 
   const [selectedPiece, setSelectedPiece] = useState({ i: null, j: null });
-  const [selectedPosition, setSelectedPosition] = useState({
-    i: null,
-    j: null,
-  });
+  const [currentTurn, setCurrentTurn] = useState("white");
 
   const [validPathArray, setValidPathArray] = useState([]);
-
-  const [board, setBoard] = useState([
+  const default_board = [
     [
       { name: "Rook", color: "black", background: "", icon: "Rook" },
       { name: "Bishop", color: "black", background: "", icon: "Bishop" },
@@ -57,7 +52,8 @@ const Game = () => {
       { name: "Bishop", color: "white", background: "", icon: "Bishop" },
       { name: "Rook", color: "white", background: "", icon: "Rook" },
     ],
-  ]);
+  ];
+  const [board, setBoard] = useState(default_board);
 
   const clearPathMarks = () => {
     console.log("clearing path");
@@ -261,8 +257,7 @@ const Game = () => {
       }
       digonallyRightUp(a - 1, b + 1, i, j);
     }
-  }
-
+  };
 
   const showPawnPath = (i, j) => {
     //clearing previous path
@@ -296,7 +291,7 @@ const Game = () => {
         ) {
           if (board[index][j - 1]?.name !== "") {
             const opponent = document.getElementById(`${index}_${j - 1}`);
-            if (opponent) {
+            if (opponent && board[i][j]?.color !== board[index][j - 1]?.color) {
               opponent.classList.add("path_ele");
               opponent.style.backgroundColor = "#c6432d";
               tempPathArray.push({ i: index, j: j - 1 });
@@ -305,7 +300,7 @@ const Game = () => {
           }
           if (board[index][j + 1]?.name !== "") {
             const opponent = document.getElementById(`${index}_${j + 1}`);
-            if (opponent) {
+            if (opponent && board[i][j]?.color !== board[index][j + 1]?.color) {
               opponent.classList.add("path_ele");
               opponent.style.backgroundColor = "#c6432d";
               tempPathArray.push({ i: index, j: j + 1 });
@@ -331,7 +326,6 @@ const Game = () => {
         // checkOponentforRock(index,j);
         const path_ele = document.getElementById(`${index}_${j}`);
 
-       
         tempPathArray.push({ i: index, j });
         if (
           (board[index][j - 1]?.name !== "" &&
@@ -507,9 +501,16 @@ const Game = () => {
     }
   };
 
+  const resetBoard = () =>{
+    setBoard(default_board);
+  }
+
   const action = (i, j) => {
     const prev_i = selectedPiece.i,
       prev_j = selectedPiece.j;
+    console.log(currentTurn);
+    let current_board = board;
+
     if (prev_i !== null && prev_j !== null) {
       const prevElement = document.getElementById(`${prev_i}_${prev_j}`);
       if (prevElement) {
@@ -541,13 +542,24 @@ const Game = () => {
         board[i][j].color !== board[prev_i][prev_j].color
       ) {
         // if both of opposit color
-        board[i][j] = board[prev_i][prev_j];
-        board[prev_i][prev_j] = {
-          name: "",
-          color: "",
-          background: "",
-          icon: "",
-        };
+        if(board[i][j].name === 'King'){
+          console.log(board[i][j].color, "king dead... Game over");
+          let message = 
+          alert("Game Over!! "+ board[prev_i][prev_j].color + ", Won the Game!!" );
+          resetBoard();
+          setCurrentTurn('white');
+        }else{
+          board[i][j] = board[prev_i][prev_j];
+          board[prev_i][prev_j] = {
+            name: "",
+            color: "",
+            background: "",
+            icon: "",
+          };
+          const next_turn = currentTurn === "white" ? "black" : "white";
+          setCurrentTurn(next_turn);
+        }
+
         clearPathMarks();
         console.log("opposit color kill other");
         setSelectedPiece((prev) => ({ ...prev, i: null, j: null }));
@@ -560,6 +572,8 @@ const Game = () => {
         board[prev_i][prev_j] = tempBoard;
         console.log("forward moving");
         clearPathMarks();
+        const next_turn = currentTurn === "white" ? "black" : "white";
+        setCurrentTurn(next_turn);
         setSelectedPiece((prev) => ({ ...prev, i: null, j: null }));
         return;
       }
@@ -567,15 +581,25 @@ const Game = () => {
       if (board[i][j].name === "") {
         return;
       }
+
+      if(currentTurn !== board[i][j].color){
+        console.log("It's ", currentTurn, "turn");
+        return;
+      }
+
       console.log("setting i,j", i, j);
       setSelectedPiece({ i, j });
       document.getElementById(`${i}_${j}`).classList.add("selected");
       showPath(i, j);
     }
+
   };
 
   return (
     <div className="game_container">
+    <div style={{color: "white"}}>
+      current Turn : {currentTurn}
+    </div>
       <div className="game_bord">
         {Array.from({ length: 8 }).map((_, i) => (
           <div className="row" key={i}>

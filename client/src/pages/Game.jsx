@@ -17,20 +17,20 @@ const Game = () => {
   const [validPathArray, setValidPathArray] = useState([]);
   const default_board = [
     [
-      { name: "Rook", color: "black", background: "", icon: "Rook" },
-      { name: "Bishop", color: "black", background: "", icon: "Bishop" },
-      { name: "Knight", color: "black", background: "", icon: "Knight" },
-      { name: "Queen", color: "black", background: "", icon: "Queen" },
-      { name: "King", color: "black", background: "", icon: "King" },
-      { name: "Knight", color: "black", background: "", icon: "Knight" },
-      { name: "Bishop", color: "black", background: "", icon: "Bishop" },
-      { name: "Rook", color: "black", background: "", icon: "Rook" },
+      { name: "Rook", color: "black", background: "", icon: "./black/icons/rook_black.png" },
+      { name: "Knight", color: "black", background: "", icon: "./black/icons/knight_black.png" },
+      { name: "Bishop", color: "black", background: "", icon: "./black/icons/bishop_black.png" },
+      { name: "Queen", color: "black", background: "", icon: "./black/icons/queen_black.png" },
+      { name: "King", color: "black", background: "", icon: "./black/icons/king_black.png" },
+      { name: "Bishop", color: "black", background: "", icon: "./black/icons/bishop_black.png" },
+      { name: "Knight", color: "black", background: "", icon: "./black/icons/knight_black.png" },
+      { name: "Rook", color: "black", background: "", icon: "./black/icons/rook_black.png" },
     ],
     Array(8).fill({
       name: "Pawn",
       color: "black",
       background: "",
-      icon: "Pawn",
+      icon: "./black/icons/pawn_black.png",
     }),
     Array(8).fill({ name: "", color: "", background: "", icon: "" }), // Empty rows
     Array(8).fill({ name: "", color: "", background: "", icon: "" }),
@@ -40,17 +40,17 @@ const Game = () => {
       name: "Pawn",
       color: "white",
       background: "",
-      icon: "Pawn",
+      icon: "./white/icons/pawn_red.png",
     }),
     [
-      { name: "Rook", color: "white", background: "", icon: "Rook" },
-      { name: "Bishop", color: "white", background: "", icon: "Bishop" },
-      { name: "Knight", color: "white", background: "", icon: "Knight" },
-      { name: "King", color: "white", background: "", icon: "King" },
-      { name: "Queen", color: "white", background: "", icon: "Queen" },
-      { name: "Knight", color: "white", background: "", icon: "Knight" },
-      { name: "Bishop", color: "white", background: "", icon: "Bishop" },
-      { name: "Rook", color: "white", background: "", icon: "Rook" },
+      { name: "Rook", color: "white", background: "", icon: "./white/icons/rook_red.png" },
+      { name: "Knight", color: "white", background: "", icon: "./white/icons/knight_red.png" },
+      { name: "Bishop", color: "white", background: "", icon: "./white/icons/bishop_red.png" },
+      { name: "King", color: "white", background: "", icon: "./white/icons/king_red.png" },
+      { name: "Queen", color: "white", background: "", icon: "./white/icons/queen_red.png" },
+      { name: "Bishop", color: "white", background: "", icon: "./white/icons/bishop_red.png" },
+      { name: "Knight", color: "white", background: "", icon: "./white/icons/knight_red.png" },
+      { name: "Rook", color: "white", background: "", icon: "./white/icons/rook_red.png" },
     ],
   ];
   const [board, setBoard] = useState(default_board);
@@ -373,8 +373,8 @@ const Game = () => {
     showRightPath(i, j + 1, i, j);
   };
 
-  const showKnightPath = (i, j) => {
-    console.log("showing Knight Path");
+  const showBishopPath = (i, j) => {
+    console.log("showing Bishop Path");
     digonallyRightUp(i - 1, j + 1, i, j);
     digonallyRightDown(i + 1, j + 1, i, j);
     digonallyLeftDown(i + 1, j - 1, i, j);
@@ -393,7 +393,8 @@ const Game = () => {
     showRightPath(i, j + 1, i, j);
   };
 
-  const showBishopPath = (i, j) => {
+  const showKnightPath = (i, j) => {
+    console.log("showing Knight Paht");
     const knightMoves = [
       { a: i - 2, b: j - 1 }, // up 2, left 1
       { a: i - 2, b: j + 1 }, // up 2, right 1
@@ -486,14 +487,14 @@ const Game = () => {
       case "Rook":
         showRookPath(i, j);
         break;
-      case "Knight":
-        showKnightPath(i, j);
+      case "Bishop":
+        showBishopPath(i, j);
         break;
       case "Queen":
         showQueenPath(i, j);
         break;
-      case "Bishop":
-        showBishopPath(i, j);
+      case "Knight":
+        showKnightPath(i, j);
         break;
       case "King":
         showKingPath(i, j);
@@ -501,15 +502,14 @@ const Game = () => {
     }
   };
 
-  const resetBoard = () =>{
+  const resetBoard = () => {
     setBoard(default_board);
-  }
+  };
 
   const action = (i, j) => {
     const prev_i = selectedPiece.i,
       prev_j = selectedPiece.j;
     console.log(currentTurn);
-    let current_board = board;
 
     if (prev_i !== null && prev_j !== null) {
       const prevElement = document.getElementById(`${prev_i}_${prev_j}`);
@@ -542,13 +542,14 @@ const Game = () => {
         board[i][j].color !== board[prev_i][prev_j].color
       ) {
         // if both of opposit color
-        if(board[i][j].name === 'King'){
+        if (board[i][j].name === "King") {
           console.log(board[i][j].color, "king dead... Game over");
-          let message = 
-          alert("Game Over!! "+ board[prev_i][prev_j].color + ", Won the Game!!" );
+          let message = alert(
+            "Game Over!! " + board[prev_i][prev_j].color + ", Won the Game!!"
+          );
           resetBoard();
-          setCurrentTurn('white');
-        }else{
+          setCurrentTurn("white");
+        } else {
           board[i][j] = board[prev_i][prev_j];
           board[prev_i][prev_j] = {
             name: "",
@@ -582,7 +583,7 @@ const Game = () => {
         return;
       }
 
-      if(currentTurn !== board[i][j].color){
+      if (currentTurn !== board[i][j].color) {
         console.log("It's ", currentTurn, "turn");
         return;
       }
@@ -592,31 +593,34 @@ const Game = () => {
       document.getElementById(`${i}_${j}`).classList.add("selected");
       showPath(i, j);
     }
-
   };
 
   return (
     <div className="game_container">
-    <div style={{color: "white"}}>
-      current Turn : {currentTurn}
-    </div>
-      <div className="game_bord">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <div className="row" key={i}>
-            {Array.from({ length: 8 }).map((_, j) => (
-              <div
-                className="col"
-                key={j}
-                onClick={() => action(i, j)}
-                id={`${i}_${j}`}
-              >
-                <span style={{ color: board[i][j]?.color }}>
-                  {board[i][j]?.name}
-                </span>
-              </div>
-            ))}
-          </div>
-        ))}
+      <div style={{ color: "white" }} className="side_bar">
+        <div className="side_bar_container">
+            It's {currentTurn} Trun!.
+        </div>
+      </div>
+      <div className="main">
+        <div className="game_bord">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div className="row" key={i}>
+              {Array.from({ length: 8 }).map((_, j) => (
+                <div
+                  className="col"
+                  key={j}
+                  onClick={() => action(i, j)}
+                  id={`${i}_${j}`}
+                >
+                  <span title={board[i][j]?.name}>
+                    <img src={board[i][j]?.icon} alt={board[i][j]?.name} />
+                  </span>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -24,10 +24,87 @@
 }
 .game_container .side_bar .side_bar_container{
   transform: scaleX(-1);
-  
+  height: 40%;
+  width: 100%;
   display: flex;
   align-items: start;
   justify-content: center;
+}
+
+.game_container .side_bar .chat_box_container{
+  transform: scaleX(-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60%;
+  width: 100%;
+  border: 2px solid gray;
+  border-radius: 10px;
+  /* background-color: red; */
+  padding: 5px;
+}
+
+.game_container .side_bar .chat_box_container .chat_box{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+  gap:5px;
+  flex-direction: column;
+  
+}
+
+.game_container .side_bar .chat_box_container .chat_box .chats_container{
+  /* background-color:rgb(60, 60, 56); */
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  overflow: auto; 
+  
+}
+
+.game_container .side_bar .chat_box_container .chat_box .chats_container .chat{
+  width: 100%;
+  display: flex;
+  align-items:center ;
+  padding:0px 5px 5px 5px;
+}
+
+.game_container .side_bar .chat_box_container .chat_box .chats_container .chat span{
+  width: fit-content;
+  background-color: azure;
+  color:black;
+  padding: 8px;
+  border-radius: 5px;
+}
+
+.game_container .side_bar .chat_box_container .chat_box .chats_container .white_chat{
+  justify-content: end;
+}
+.game_container .side_bar .chat_box_container .chat_box .chats_container .black_chat{
+  justify-content: start;
+}
+.input_chat{
+  width: 100%;
+}
+#input_form{
+  width: 100%;
+}
+#message{
+  width: calc(100% - 40px);
+  height: 40px;
+  padding: 5px;
+  border-radius: 20px;
+}
+#send_message{
+  width: 40px;
+  height: 40px;
+  padding: 5px;
+  border-radius: 50% 50%;
+  cursor: pointer;
 }
 
 .game_container .main{

@@ -55,6 +55,17 @@ const Game = () => {
   ];
   const [board, setBoard] = useState(default_board);
 
+  const [allChats, setAllChats] = useState([
+    {
+      sender:"white",
+      message:"Hello",
+    },
+    {
+      sender:"black",
+      message:"Hi..",
+    },
+  ])
+
   const clearPathMarks = () => {
     console.log("clearing path");
     setValidPathArray([]);
@@ -595,11 +606,37 @@ const Game = () => {
     }
   };
 
+  const addMessage = (e) =>{
+    e.preventDefault();
+    let text= document.getElementById('message').value;
+    setAllChats([...allChats, {sender:"white", message:text  }]);
+  }
+
   return (
     <div className="game_container">
       <div style={{ color: "white" }} className="side_bar">
         <div className="side_bar_container">
             It's {currentTurn} Trun!.
+        </div>
+        <div className="chat_box_container">
+          <div className="chat_box">
+            <div className="chats_container">
+              {
+                allChats?.map((ele, i)=>(
+                  <div className={`chat ` + (ele.sender == 'white' ? 'white_chat' : 'black_chat')} key={i}>   
+                    <span>{ele.message}</span>
+                  </div>
+                ))
+              }
+            </div>
+            
+            <div className="input_chat">
+              <form onSubmit={addMessage} id="input_form">
+                <input type="text" name="message" id="message"/>
+                <input type="submit" name="submit" id="send_message" value="Submit"/>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
       <div className="main">

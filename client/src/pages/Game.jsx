@@ -1,21 +1,61 @@
 import React, { useEffect, useState } from "react";
-import { getCurrentUser } from "../hooks/userHooks";
+import { getCurrentUser, updateTurn, logout } from "../hooks/userHooks";
 const Game = () => {
   const [user, setUser] = useState(null);
   const [selectedPiece, setSelectedPiece] = useState({ i: null, j: null });
-  const [currentTurn, setCurrentTurn] = useState("white");
-
+  const [currentTurn, setCurrentTurn] = useState(null);
+  const [updateResponse, setUpdateResponse] = useState(null);
   const [validPathArray, setValidPathArray] = useState([]);
   const default_board = [
     [
-      { name: "Rook", color: "black", background: "", icon: "./black/icons/rook_black.png" },
-      { name: "Knight", color: "black", background: "", icon: "./black/icons/knight_black.png" },
-      { name: "Bishop", color: "black", background: "", icon: "./black/icons/bishop_black.png" },
-      { name: "Queen", color: "black", background: "", icon: "./black/icons/queen_black.png" },
-      { name: "King", color: "black", background: "", icon: "./black/icons/king_black.png" },
-      { name: "Bishop", color: "black", background: "", icon: "./black/icons/bishop_black.png" },
-      { name: "Knight", color: "black", background: "", icon: "./black/icons/knight_black.png" },
-      { name: "Rook", color: "black", background: "", icon: "./black/icons/rook_black.png" },
+      {
+        name: "Rook",
+        color: "black",
+        background: "",
+        icon: "./black/icons/rook_black.png",
+      },
+      {
+        name: "Knight",
+        color: "black",
+        background: "",
+        icon: "./black/icons/knight_black.png",
+      },
+      {
+        name: "Bishop",
+        color: "black",
+        background: "",
+        icon: "./black/icons/bishop_black.png",
+      },
+      {
+        name: "Queen",
+        color: "black",
+        background: "",
+        icon: "./black/icons/queen_black.png",
+      },
+      {
+        name: "King",
+        color: "black",
+        background: "",
+        icon: "./black/icons/king_black.png",
+      },
+      {
+        name: "Bishop",
+        color: "black",
+        background: "",
+        icon: "./black/icons/bishop_black.png",
+      },
+      {
+        name: "Knight",
+        color: "black",
+        background: "",
+        icon: "./black/icons/knight_black.png",
+      },
+      {
+        name: "Rook",
+        color: "black",
+        background: "",
+        icon: "./black/icons/rook_black.png",
+      },
     ],
     Array(8).fill({
       name: "Pawn",
@@ -34,28 +74,70 @@ const Game = () => {
       icon: "./white/icons/pawn_red.png",
     }),
     [
-      { name: "Rook", color: "white", background: "", icon: "./white/icons/rook_red.png" },
-      { name: "Knight", color: "white", background: "", icon: "./white/icons/knight_red.png" },
-      { name: "Bishop", color: "white", background: "", icon: "./white/icons/bishop_red.png" },
-      { name: "King", color: "white", background: "", icon: "./white/icons/king_red.png" },
-      { name: "Queen", color: "white", background: "", icon: "./white/icons/queen_red.png" },
-      { name: "Bishop", color: "white", background: "", icon: "./white/icons/bishop_red.png" },
-      { name: "Knight", color: "white", background: "", icon: "./white/icons/knight_red.png" },
-      { name: "Rook", color: "white", background: "", icon: "./white/icons/rook_red.png" },
+      {
+        name: "Rook",
+        color: "white",
+        background: "",
+        icon: "./white/icons/rook_red.png",
+      },
+      {
+        name: "Knight",
+        color: "white",
+        background: "",
+        icon: "./white/icons/knight_red.png",
+      },
+      {
+        name: "Bishop",
+        color: "white",
+        background: "",
+        icon: "./white/icons/bishop_red.png",
+      },
+      {
+        name: "King",
+        color: "white",
+        background: "",
+        icon: "./white/icons/king_red.png",
+      },
+      {
+        name: "Queen",
+        color: "white",
+        background: "",
+        icon: "./white/icons/queen_red.png",
+      },
+      {
+        name: "Bishop",
+        color: "white",
+        background: "",
+        icon: "./white/icons/bishop_red.png",
+      },
+      {
+        name: "Knight",
+        color: "white",
+        background: "",
+        icon: "./white/icons/knight_red.png",
+      },
+      {
+        name: "Rook",
+        color: "white",
+        background: "",
+        icon: "./white/icons/rook_red.png",
+      },
     ],
   ];
+
+  
   const [board, setBoard] = useState(default_board);
 
   const [allChats, setAllChats] = useState([
     {
-      sender:"white",
-      message:"Hello",
+      sender: "white",
+      message: "Hello",
     },
     {
-      sender:"black",
-      message:"Hi..",
+      sender: "black",
+      message: "Hi..",
     },
-  ])
+  ]);
 
   const clearPathMarks = () => {
     console.log("clearing path");
@@ -508,7 +590,7 @@ const Game = () => {
     setBoard(default_board);
   };
 
-  const action = (i, j) => {
+  const action = async (i, j) => {
     const prev_i = selectedPiece.i,
       prev_j = selectedPiece.j;
     console.log(currentTurn);
@@ -547,10 +629,10 @@ const Game = () => {
         if (board[i][j].name === "King") {
           console.log(board[i][j].color, "king dead... Game over");
           let message = alert(
-            "Game Over!! " + board[prev_i][prev_j].color + ", Won the Game!!"
+            "Game Over!! " + board[prev_i][prev_j].color === user.color ? user.username : user.opponent.username + ", Won the Game!!"
           );
           resetBoard();
-          setCurrentTurn("white");
+          // setUpdateResponse(updateTurn());
         } else {
           board[i][j] = board[prev_i][prev_j];
           board[prev_i][prev_j] = {
@@ -560,7 +642,8 @@ const Game = () => {
             icon: "",
           };
           const next_turn = currentTurn === "white" ? "black" : "white";
-          setCurrentTurn(next_turn);
+          const res = await updateTurn(board);
+          setUpdateResponse(res);
         }
 
         clearPathMarks();
@@ -576,7 +659,8 @@ const Game = () => {
         console.log("forward moving");
         clearPathMarks();
         const next_turn = currentTurn === "white" ? "black" : "white";
-        setCurrentTurn(next_turn);
+        const res = await updateTurn(board);
+        setUpdateResponse(res);
         setSelectedPiece((prev) => ({ ...prev, i: null, j: null }));
         return;
       }
@@ -597,52 +681,83 @@ const Game = () => {
     }
   };
 
-  const addMessage = (e) =>{
+  const addMessage = (e) => {
     e.preventDefault();
-    let text= document.getElementById('message').value;
-    setAllChats([...allChats, {sender:"white", message:text  }]);
+    let text = document.getElementById("message").value;
+    setAllChats([...allChats, { sender: "white", message: text }]);
+  };
+
+  const logoutFunction = async ()=>{
+    await logout();
   }
 
-  useEffect( ()=>{
+  useEffect(() => {
     const fetchUser = async () => {
       const currentUser = await getCurrentUser();
       setUser(currentUser);
+      if(currentUser){
+        setCurrentTurn(currentUser.turn.color);
+        setBoard(currentUser.board || default_board);
+      }
     };
 
     fetchUser();
-  }, []);
-  if(!user){
-    return <>Loadding..</>
+  }, [updateResponse]);
+  if (!user) {
+    return <>Loadding..</>;
+  }
+  if(!user.opponent){
+    return <><div className="logout">
+    <button onClick={logoutFunction}>LogOut</button>
+  </div>Searching Opponent!!</>
   }
   return (
     <div className="game_container">
+     
       <div style={{ color: "white" }} className="side_bar">
+        
         <div className="side_bar_container">
-            It's {currentTurn === "white" ? `Your (${user?.username})` : `${user?.opponent?.username}`} Trun!.
+        <div className="logout">
+          <button onClick={logoutFunction}>LogOut</button>
+        </div>
+          It's{" "}
+          {currentTurn === "white"
+            ? `Your (${user?.username})`
+            : `${user?.opponent?.username}`}{" "}
+          Trun!.
         </div>
         <div className="chat_box_container">
           <div className="chat_box">
             <div className="chats_container">
-              {
-                allChats?.map((ele, i)=>(
-                  <div className={`chat ` + (ele.sender == 'white' ? 'white_chat' : 'black_chat')} key={i}>   
-                    <span>{ele.message}</span>
-                  </div>
-                ))
-              }
+              {allChats?.map((ele, i) => (
+                <div
+                  className={
+                    `chat ` +
+                    (ele.sender == "white" ? "white_chat" : "black_chat")
+                  }
+                  key={i}
+                >
+                  <span>{ele.message}</span>
+                </div>
+              ))}
             </div>
-            
+
             <div className="input_chat">
               <form onSubmit={addMessage} id="input_form">
-                <input type="text" name="message" id="message"/>
-                <input type="submit" name="submit" id="send_message" value="Submit"/>
+                <input type="text" name="message" id="message" />
+                <input
+                  type="submit"
+                  name="submit"
+                  id="send_message"
+                  value="Submit"
+                />
               </form>
             </div>
           </div>
         </div>
       </div>
       <div className="main">
-        <div className="game_bord">
+        <div className={`game_bord ${user.color}_turn`}>
           {Array.from({ length: 8 }).map((_, i) => (
             <div className="row" key={i}>
               {Array.from({ length: 8 }).map((_, j) => (
@@ -653,7 +768,7 @@ const Game = () => {
                   id={`${i}_${j}`}
                 >
                   <span title={board[i][j]?.name}>
-                    <img src={board[i][j]?.icon} alt={board[i][j]?.name} />
+                    <img src={board[i][j]?.icon} alt={board[i][j]?.name} className={` ${user.color}_turn`}/>
                   </span>
                 </div>
               ))}

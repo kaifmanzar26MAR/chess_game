@@ -4,7 +4,9 @@
   box-sizing: border-box;
 }
 
-
+.black_turn{
+  transform: rotate(180deg);
+}
 
 .game_container {
   display: flex;

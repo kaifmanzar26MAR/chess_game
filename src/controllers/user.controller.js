@@ -2,7 +2,124 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
-
+const default_board = [
+  [
+    {
+      name: "Rook",
+      color: "black",
+      background: "",
+      icon: "./black/icons/rook_black.png",
+    },
+    {
+      name: "Knight",
+      color: "black",
+      background: "",
+      icon: "./black/icons/knight_black.png",
+    },
+    {
+      name: "Bishop",
+      color: "black",
+      background: "",
+      icon: "./black/icons/bishop_black.png",
+    },
+    {
+      name: "Queen",
+      color: "black",
+      background: "",
+      icon: "./black/icons/queen_black.png",
+    },
+    {
+      name: "King",
+      color: "black",
+      background: "",
+      icon: "./black/icons/king_black.png",
+    },
+    {
+      name: "Bishop",
+      color: "black",
+      background: "",
+      icon: "./black/icons/bishop_black.png",
+    },
+    {
+      name: "Knight",
+      color: "black",
+      background: "",
+      icon: "./black/icons/knight_black.png",
+    },
+    {
+      name: "Rook",
+      color: "black",
+      background: "",
+      icon: "./black/icons/rook_black.png",
+    },
+  ],
+  Array(8).fill({
+    name: "Pawn",
+    color: "black",
+    background: "",
+    icon: "./black/icons/pawn_black.png",
+  }),
+  Array(8).fill({ name: "", color: "", background: "", icon: "" }), // Empty rows
+  Array(8).fill({ name: "", color: "", background: "", icon: "" }),
+  Array(8).fill({ name: "", color: "", background: "", icon: "" }),
+  Array(8).fill({ name: "", color: "", background: "", icon: "" }),
+  Array(8).fill({
+    name: "Pawn",
+    color: "white",
+    background: "",
+    icon: "./white/icons/pawn_red.png",
+  }),
+  [
+    {
+      name: "Rook",
+      color: "white",
+      background: "",
+      icon: "./white/icons/rook_red.png",
+    },
+    {
+      name: "Knight",
+      color: "white",
+      background: "",
+      icon: "./white/icons/knight_red.png",
+    },
+    {
+      name: "Bishop",
+      color: "white",
+      background: "",
+      icon: "./white/icons/bishop_red.png",
+    },
+    {
+      name: "King",
+      color: "white",
+      background: "",
+      icon: "./white/icons/king_red.png",
+    },
+    {
+      name: "Queen",
+      color: "white",
+      background: "",
+      icon: "./white/icons/queen_red.png",
+    },
+    {
+      name: "Bishop",
+      color: "white",
+      background: "",
+      icon: "./white/icons/bishop_red.png",
+    },
+    {
+      name: "Knight",
+      color: "white",
+      background: "",
+      icon: "./white/icons/knight_red.png",
+    },
+    {
+      name: "Rook",
+      color: "white",
+      background: "",
+      icon: "./white/icons/rook_red.png",
+    },
+  ],
+];
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
@@ -67,7 +184,6 @@ const generateAccessAndRefreshTokens = async (userId) => {
 //     }
 //   });
 
-let mapUserData = {};
 const loginAndUserMapping = asyncHandler(async (req, res) => {
   try {
     const { username } = req.params;
@@ -90,7 +206,7 @@ const loginAndUserMapping = asyncHandler(async (req, res) => {
     //check for the the unpaired
     const unpaired_user = await User.findOne({
       _id: { $ne: user._id },
-      opponent: { $exists: false }
+      opponent: { $exists: false },
     });
 
     if (unpaired_user) {
@@ -102,8 +218,11 @@ const loginAndUserMapping = asyncHandler(async (req, res) => {
       unpaired_user.turn = unpaired_user._id;
       //setting color
       unpaired_user.color = "white";
-      user.color = "black";
-
+      user.color = "black"; 
+      //mapping the basic borser 
+      const string_board = default_board;
+      unpaired_user.board = string_board;
+      user.board = string_board; 
 
       await Promise.all([user.save(), unpaired_user.save()]);
     }
@@ -111,7 +230,9 @@ const loginAndUserMapping = asyncHandler(async (req, res) => {
     const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
       user._id
     );
-    const loggedInUser = await User.findById(user._id).populate("opponent").select("-refreshToken");
+    const loggedInUser = await User.findById(user._id)
+      .populate("opponent")
+      .select("-refreshToken");
     const options = {
       httpOnly: true,
       secure: true,
@@ -145,16 +266,17 @@ const currentUser = asyncHandler(async (req, res) => {
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
-  await User.findByIdAndUpdate(
-    req.user._id,
+  await User.findByIdAndDelete(req.user._id);
+  await User.findByIdAndUpdate(req.user.opponent._id,
     {
-      $unset: {
-        refreshToken: 1,
+      $unset:{
         opponent: 1,
+        color:1,
+        turn:1,
       },
-    },
-    {
-      new: true,
+      $set:{
+        board: default_board,
+      }
     }
   );
 
@@ -170,24 +292,27 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "User logged Out"));
 });
 
-const setTurn = asyncHandler(async(req, res)=>{
+const setTurn = asyncHandler(async (req, res) => {
+  const {board} = req.body;
+  console.log(board);
   const user1 = req.user;
-  if(!user1.opponent){
+  if (!user1.opponent) {
     throw new ApiError("No Opponent Found");
   }
-  const user2 = await User.findOne({_id:user1.opponent._id});
-  
-  const current_trun = user1?.turn;
+  const user2 = await User.findOne({ _id: user1.opponent._id });
 
-  const next_trun = current_trun === user1._id ? user2._id : user1._id;
+  const next_trun = user2._id;
 
   user1.turn = next_trun;
   user2.turn = next_trun;
 
+  user1.board = board;
+  user2.board = board;
+
   await Promise.all([user1.save(), user2.save()]);
 
   return res.status(200).json(new ApiResponse(201, "Turn updated"));
-})
+});
 
 export { loginAndUserMapping, currentUser, logoutUser, setTurn };
 

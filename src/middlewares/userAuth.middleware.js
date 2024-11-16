@@ -13,7 +13,7 @@ export const userAuth = asyncHandler(async (req, _, next) => {
     }
     const decodedToken = Jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-    const user = await User.findById(decodedToken?._id).populate('opponent').select(
+    const user = await User.findById(decodedToken?._id).populate(['opponent', 'turn']).select(
       "-refreshToken"
     );
 

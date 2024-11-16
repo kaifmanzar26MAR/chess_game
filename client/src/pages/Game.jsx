@@ -1,16 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { getCurrentUser } from "../hooks/userHooks";
 const Game = () => {
-  // const board = [
-  //   ["Rock", "Bishop", "Knight", "Queen", "King", "Knight", "Bishop", "Rock"],
-  //   ["Pawn", "Pawn", "Pawn", "Pawn", "Pawn", "Pawn", "Pawn", "Pawn"],
-  //   ['','','','','','','',''],
-  //   ['','','','','','','',''],
-  //   ['','','','','','','',''],
-  //   ['','','','','','','',''],
-  //   ["Pawn", "Pawn", "Pawn", "Pawn", "Pawn", "Pawn", "Pawn", "Pawn"],
-  //   ["Rock", "Bishop", "Knight", "King", "Queen", "Knight", "Bishop", "Rock"],
-  // ];
-
+  const [user, setUser] = useState(null);
   const [selectedPiece, setSelectedPiece] = useState({ i: null, j: null });
   const [currentTurn, setCurrentTurn] = useState("white");
 
@@ -612,11 +603,22 @@ const Game = () => {
     setAllChats([...allChats, {sender:"white", message:text  }]);
   }
 
+  useEffect( ()=>{
+    const fetchUser = async () => {
+      const currentUser = await getCurrentUser();
+      setUser(currentUser);
+    };
+
+    fetchUser();
+  }, []);
+  if(!user){
+    return <>Loadding..</>
+  }
   return (
     <div className="game_container">
       <div style={{ color: "white" }} className="side_bar">
         <div className="side_bar_container">
-            It's {currentTurn} Trun!.
+            It's {currentTurn === "white" ? `Your (${user?.username})` : `${user?.opponent?.username}`} Trun!.
         </div>
         <div className="chat_box_container">
           <div className="chat_box">

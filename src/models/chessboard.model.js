@@ -19,4 +19,4 @@ const chessBoardSchema = new Schema({
 
 const chessBoard = mongoose.models.chessBoard || mongoose.model('chessBoard', chessBoardSchema);
 
-export default chessBoard;
+export {chessBoard};

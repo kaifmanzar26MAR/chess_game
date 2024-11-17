@@ -591,6 +591,8 @@ const Game = () => {
   };
 
   const action = async (i, j) => {
+    if(user.username !== user.turn.username) return false;
+     
     const prev_i = selectedPiece.i,
       prev_j = selectedPiece.j;
     console.log(currentTurn);
@@ -696,7 +698,10 @@ const Game = () => {
       const currentUser = await getCurrentUser();
       setUser(currentUser);
       if(currentUser){
+       
         setCurrentTurn(currentUser.turn.color);
+        
+        // setCurrentTurn(currentUser.turn.color === currentUser.color && currentUser.color === 'white' ? 'black' : 'white');
         setBoard(currentUser.board || default_board);
       }
     };
@@ -717,13 +722,14 @@ const Game = () => {
       <div style={{ color: "white" }} className="side_bar">
         
         <div className="side_bar_container">
+          <div className="username">
+            Hi {user.username}!,
+          </div>
         <div className="logout">
           <button onClick={logoutFunction}>LogOut</button>
         </div>
           It's{" "}
-          {currentTurn === "white"
-            ? `Your (${user?.username})`
-            : `${user?.opponent?.username}`}{" "}
+          {user.turn.username === user.username ? 'Your' : user.turn.username }{" "}
           Trun!.
         </div>
         <div className="chat_box_container">

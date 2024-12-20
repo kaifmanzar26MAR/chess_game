@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getCurrentUser, updateTurn, logout } from "../hooks/userHooks";
+import axios from "axios";
 const Game = () => {
   const [user, setUser] = useState(null);
   const [selectedPiece, setSelectedPiece] = useState({ i: null, j: null });
@@ -125,20 +126,11 @@ const Game = () => {
     ],
   ];
 
-  
   const [board, setBoard] = useState(default_board);
 
-  const [allChats, setAllChats] = useState([
-    {
-      sender: "white",
-      message: "Hello",
-    },
-    {
-      sender: "black",
-      message: "Hi..",
-    },
-  ]);
+  const [allChats, setAllChats] = useState([]);
 
+  //* This function clear the hilighted path
   const clearPathMarks = () => {
     console.log("clearing path");
     setValidPathArray([]);
@@ -148,6 +140,8 @@ const Game = () => {
       ele.classList.remove("path_ele");
     });
   };
+
+  //* Checking the move is on the correct path or not
   const isCorrectPath = (i, j) => {
     setSelectedPiece({ i: null, j: null });
     console.log(validPathArray);
@@ -159,7 +153,7 @@ const Game = () => {
     return false;
   };
 
-  // showing path for rook &
+  //* showing uppper path or the continous mover
   const showUpperPath = (a, b, i, j) => {
     if (a < 0) return;
 
@@ -181,6 +175,8 @@ const Game = () => {
       showUpperPath(a - 1, b, i, j);
     }
   };
+
+  //*showing the lower the for the continous mover
   const showLowerPath = (a, b, i, j) => {
     if (a >= board.length) return;
 
@@ -202,6 +198,8 @@ const Game = () => {
       showLowerPath(a + 1, b, i, j);
     }
   };
+
+  //*showing the Let the for the continous mover
   const showLeftPath = (a, b, i, j) => {
     if (b < 0) return;
 
@@ -223,6 +221,8 @@ const Game = () => {
       showLeftPath(a, b - 1, i, j);
     }
   };
+
+  //*showing the Rigth the for the continous mover
   const showRightPath = (a, b, i, j) => {
     if (b >= board.length) return;
 
@@ -245,6 +245,7 @@ const Game = () => {
     }
   };
 
+  //*showing the digonlly left down path the for the continous mover
   const digonallyLeftDown = (a, b, i, j) => {
     // Check boundaries for an 8x8 board
     if (b < 0 || a >= 8) return;
@@ -271,6 +272,8 @@ const Game = () => {
       digonallyLeftDown(a + 1, b - 1, i, j); // Move diagonally left-down
     }
   };
+
+  //*showing the digonlly left Up path the for the continous mover
   const digonallyLeftUp = (a, b, i, j) => {
     // Check boundaries for an 8x8 board
     if (b < 0 || a < 0) return;
@@ -294,6 +297,8 @@ const Game = () => {
       digonallyLeftUp(a - 1, b - 1, i, j); // Move diagonally left-up
     }
   };
+
+  //*showing the digonlly Right down path the for the continous mover
   const digonallyRightDown = (a, b, i, j) => {
     // Check boundaries for an 8x8 board
     if (b >= 8 || a >= 8) return;
@@ -320,6 +325,8 @@ const Game = () => {
       digonallyRightDown(a + 1, b + 1, i, j); // Move diagonally right-down
     }
   };
+
+  //*showing the digonlly Right up path the for the continous mover
   const digonallyRightUp = (a, b, i, j) => {
     if (b >= 8 || a < 0) return;
 
@@ -343,6 +350,7 @@ const Game = () => {
     }
   };
 
+  //*showing Pawn path
   const showPawnPath = (i, j) => {
     //clearing previous path
     clearPathMarks();
@@ -448,6 +456,7 @@ const Game = () => {
     setValidPathArray(tempPathArray);
   };
 
+  //*Showing the rook path
   const showRookPath = (i, j) => {
     console.log("showing Rook Path");
 
@@ -457,6 +466,7 @@ const Game = () => {
     showRightPath(i, j + 1, i, j);
   };
 
+  //* Showing BishopPaht
   const showBishopPath = (i, j) => {
     console.log("showing Bishop Path");
     digonallyRightUp(i - 1, j + 1, i, j);
@@ -465,6 +475,7 @@ const Game = () => {
     digonallyLeftUp(i - 1, j - 1, i, j);
   };
 
+  //*Showing Queen Paht
   const showQueenPath = (i, j) => {
     console.log("showing Queen Path");
     digonallyRightUp(i - 1, j + 1, i, j);
@@ -477,6 +488,7 @@ const Game = () => {
     showRightPath(i, j + 1, i, j);
   };
 
+  //* Showing Knight Path
   const showKnightPath = (i, j) => {
     console.log("showing Knight Paht");
     const knightMoves = [
@@ -520,6 +532,8 @@ const Game = () => {
       }
     });
   };
+
+  //* Shoing King Paht
   const showKingPath = (i, j) => {
     const kingMoves = [
       { a: i - 1, b: j - 1 }, // upper left
@@ -561,6 +575,7 @@ const Game = () => {
     });
   };
 
+  //* This function check the Pice and show the path as per it and also validate the user and opponent
   const showPath = (i, j) => {
     const peice = board[i][j];
     console.log(peice.name);
@@ -586,13 +601,15 @@ const Game = () => {
     }
   };
 
+  //*Resetting the board
   const resetBoard = () => {
     setBoard(default_board);
   };
 
+  //* This function handle the action on move
   const action = async (i, j) => {
-    if(user.username !== user.turn.username) return false;
-     
+    if (user.username !== user.turn.username) return false;
+
     const prev_i = selectedPiece.i,
       prev_j = selectedPiece.j;
     console.log(currentTurn);
@@ -631,7 +648,9 @@ const Game = () => {
         if (board[i][j].name === "King") {
           console.log(board[i][j].color, "king dead... Game over");
           let message = alert(
-            "Game Over!! " + board[prev_i][prev_j].color === user.color ? user.username : user.opponent.username + ", Won the Game!!"
+            "Game Over!! " + board[prev_i][prev_j].color === user.color
+              ? user.username
+              : user.opponent.username + ", Won the Game!!"
           );
           resetBoard();
           // setUpdateResponse(updateTurn());
@@ -683,63 +702,177 @@ const Game = () => {
     }
   };
 
-  const addMessage = (e) => {
+  //* Send the smessage to the opponent
+  const addMessage = async (e) => {
     e.preventDefault();
     let text = document.getElementById("message").value;
-    setAllChats([...allChats, { sender: "white", message: text }]);
+    setAllChats([...allChats, { sender: user._id, message: text }]);
+    document.getElementById("message").value = "";
+    const response = await axios.post('http://localhost:9000/message/send_messaage',{message : text},
+    {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    if(!response){
+      console.log("error");
+    }
   };
 
-  const logoutFunction = async ()=>{
-    await logout();
-  }
 
+  //* Logout the game
+  const logoutFunction = async () => {
+    await logout();
+  };
+
+  //* A quit function must be introduce here
+
+  //* On page lod events handling
   useEffect(() => {
+
+    //*Fecthing the details of the current user
     const fetchUser = async () => {
       const currentUser = await getCurrentUser();
       setUser(currentUser);
-      if(currentUser){
-       
+      if (currentUser) {
         setCurrentTurn(currentUser.turn.color);
-        
+
         // setCurrentTurn(currentUser.turn.color === currentUser.color && currentUser.color === 'white' ? 'black' : 'white');
         setBoard(currentUser.board || default_board);
       }
     };
 
+    //* Fechignt the message on the basis of the paired user and oppeonent
+    const fetchMessage = async () =>{
+      const messages = await axios.post("http://localhost:9000/message/get_message", {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if(!messages){
+        console.log("message error");
+      }
+      setAllChats(messages.data.data.all_message);
+      
+    }
+
     fetchUser();
+    fetchMessage();
   }, [updateResponse]);
+
+  //* Show loading if no user persent
   if (!user) {
-    return <>Loadding..</>;
+    return <><div className="game_container h-[100vh] w-full flex items-center justify-center"><img src="./loading.webp" alt="loading" className="w-[200px]" /></div></>;
   }
-  if(!user.opponent){
-    return <><div className="logout">
-    <button onClick={logoutFunction}>LogOut</button>
-  </div>Searching Opponent!!</>
+
+  //*Show finding opponent if no opponent present
+  if (!user.opponent) {
+    return (
+      <div className="w-full h-[100vh] flex justify-center items-center relative ">
+        <div
+          className="username flex gap-4 items-center justify-center w-[300px] cursor-pointer bg-slate-200 rounded hover:bg-slate-300 text-black p-2 absolute top-5 left-5"
+          titile="logout"
+          onClick={logoutFunction}
+        >
+          <img src="./shutdown.png" alt="logout" className="w-14" />
+          <p className="font-semibold text-2xl">
+            Hi! {user.username.toUpperCase()}
+          </p>
+        </div>
+        <div className="flex items-center justify-center flex-col">
+          <img
+            src="./searching_gif.gif"
+            alt="search_icon"
+            className="w-[200px]"
+          />
+          <p className="text-4xl">Searching for Opponent!!</p>
+        </div>
+      </div>
+    );
   }
+
+  //*Setting message on the basis of thee user turn
+  const user_turn_message = "It's your turn!, " + user.username.toUpperCase();
+  const opponent_turn_message =
+    "It's " + user.turn.username.toUpperCase() + " turn!";
+
+
   return (
     <div className="game_container">
-     
+
+      {/* Side bar start */}
       <div style={{ color: "white" }} className="side_bar">
-        
-        <div className="side_bar_container">
-          <div className="username">
-            Hi {user.username}!,
+
+        {/*   Sidebar info section start */}
+        <div className="side_bar_container flex gap-5 flex-col p-8">
+
+             {/* Game logo */}
+          <div className="logo">
+            <img src="./chess_log.jpg" alt="logo" className="w-full rounded" />
           </div>
-        <div className="logout">
-          <button onClick={logoutFunction}>LogOut</button>
+
+          {/*   Logot function and current turn status */}
+          <div
+            className="username flex gap-4 items-center justify-center w-full cursor-pointer bg-slate-200 rounded hover:bg-slate-300 text-black p-2"
+            titile="logout"
+            onClick={logoutFunction}
+          >
+            <img src="./shutdown.png" alt="logout" className="w-14" />
+            <p className="font-semibold text-2xl">
+              Hi! {user.username.toUpperCase()}
+            </p>
+          </div>
+
+          {/*   Time counter */}
+          <div className="turn_cont flex items-center justify-center flex-col text-black bg-slate-200 rounded">
+            <div
+              className="timmer text-center text-5xl font-bold"
+              id="time_show"
+            >
+              0:59
+            </div>
+            <p
+              className={`turn_box font-semibold ${
+                user.turn.username === user.username
+                  ? "text-green-800"
+                  : "text-orange-800"
+              }`}
+            >
+              {user.turn.username === user.username
+                ? user_turn_message
+                : opponent_turn_message}{" "}
+            </p>
+          </div>
+
+
         </div>
-          It's{" "}
-          {user.turn.username === user.username ? 'Your' : user.turn.username }{" "}
-          Trun!.
-        </div>
-        <div className="chat_box_container">
-          <div className="chat_box">
-            <div className="chats_container">
+           {/* Sidebar info section end */}
+
+        {/*   Sidebar chat section start */}
+        <div className="chat_box_container h-[350px] p-8 flex items-center justify-center ">
+          
+          <div className="chat_box bg-slate-200 rounded overflow-hidden">
+
+            {/*   Message box head and opponent name content */}
+            <div className="opponent_chat_head flex gap-2 font-semibold items-center w-full bg-white p-2">
+              <span className="px-3 py-2 rounded-full bg-red-800">
+                {user.opponent.username[0].toUpperCase()}
+              </span>{" "}
+              <p className="text-2xl text-black">
+                {user.opponent.username.toUpperCase()}
+              </p>
+            </div>
+               {/* Message box head ends here */}
+
+            {/*   Chats are here */}
+            <div className="chats_container overflow-auto">
               {allChats?.map((ele, i) => (
                 <div
                   className={
                     `chat ` +
-                    (ele.sender == "white" ? "white_chat" : "black_chat")
+                    (ele.sender == user._id ?  "current_user_chat" : "opponet_user_chat")
                   }
                   key={i}
                 >
@@ -747,21 +880,41 @@ const Game = () => {
                 </div>
               ))}
             </div>
+            {/*   Chats ends here */}
 
+            {/*   send message input box and send button */}
             <div className="input_chat">
-              <form onSubmit={addMessage} id="input_form">
-                <input type="text" name="message" id="message" />
+              <form
+                onSubmit={addMessage}
+                id="input_form"
+                className="w-full flex items-center"
+              >
+                <input
+                  type="text"
+                  name="message"
+                  id="message"
+                  placeholder="Type your message"
+                  className=" w-full text-gray-900 p-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 rounded-t-sm"
+                />
                 <input
                   type="submit"
                   name="submit"
                   id="send_message"
-                  value="Submit"
+                  className="px-4 py-2 focus-visible:outline cursor-pointer hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 bg-indigo-600 text-white"
+                  value="Send"
                 />
               </form>
             </div>
+               {/* send message box ends */}
+
           </div>
         </div>
+        {/*   Sidebar chat section ends here */}
+
       </div>
+      {/*   Side bar end */}
+
+      {/*   Main Board area */}
       <div className="main">
         <div className={`game_bord ${user.color}_turn`}>
           {Array.from({ length: 8 }).map((_, i) => (
@@ -774,7 +927,11 @@ const Game = () => {
                   id={`${i}_${j}`}
                 >
                   <span title={board[i][j]?.name}>
-                    <img src={board[i][j]?.icon} alt={board[i][j]?.name} className={` ${user.color}_turn`}/>
+                    <img
+                      src={board[i][j]?.icon}
+                      alt={board[i][j]?.name}
+                      className={` ${user.color}_turn`}
+                    />
                   </span>
                 </div>
               ))}

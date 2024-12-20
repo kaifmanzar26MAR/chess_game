@@ -186,10 +186,9 @@ const generateAccessAndRefreshTokens = async (userId) => {
 
 const loginAndUserMapping = asyncHandler(async (req, res) => {
   try {
-    const { username } = req.params;
-    console.log(username);
+    let { username } = req.params;
 
-    const user = await User.findOne({ username });
+    let user = await User.findOne({ username });
 
     if (!user) {
       user = await User.create({
@@ -204,7 +203,7 @@ const loginAndUserMapping = asyncHandler(async (req, res) => {
     }
 
     //check for the the unpaired
-    const unpaired_user = await User.findOne({
+    let unpaired_user = await User.findOne({
       _id: { $ne: user._id },
       opponent: { $exists: false },
     });
@@ -220,7 +219,7 @@ const loginAndUserMapping = asyncHandler(async (req, res) => {
       unpaired_user.color = "white";
       user.color = "black"; 
       //mapping the basic borser 
-      const string_board = default_board;
+      let string_board = default_board;
       unpaired_user.board = string_board;
       user.board = string_board; 
 
@@ -253,7 +252,6 @@ const loginAndUserMapping = asyncHandler(async (req, res) => {
         )
       );
   } catch (error) {
-    console.log(error);
     return res.status(500).json(new ApiError(500, error));
   }
 });
@@ -294,7 +292,6 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 const setTurn = asyncHandler(async (req, res) => {
   const {board} = req.body;
-  console.log(board);
   const user1 = req.user;
   if (!user1.opponent) {
     throw new ApiError("No Opponent Found");

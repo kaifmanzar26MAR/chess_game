@@ -3,6 +3,8 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import homeRouter from "./routes/home.routes.js";
 import userRouter from "./routes/user.routes.js";
+import messageRouter from "./routes/message.routes.js";
+
 const app = express();
 
 app.use(
@@ -19,6 +21,8 @@ app.use(cookieParser());
 
 //routes declaration
 app.use("/", homeRouter);
-app.use("/user/", userRouter)
+app.use("/user/", userRouter);
+app.use("/message/", messageRouter);
+
 
 export { app };

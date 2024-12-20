@@ -9,6 +9,7 @@ const conversationSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref:"User",
     },
+
     messageIds:[
         {
             type: Schema.Types.ObjectId,
@@ -18,5 +19,6 @@ const conversationSchema = new Schema({
 },{
     timestamps:true,
 });
+
 
 export const Conversation = mongoose.models.Conversation || mongoose.model("Conversation", conversationSchema);

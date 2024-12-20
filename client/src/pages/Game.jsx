@@ -754,7 +754,8 @@ const Game = () => {
       if(!messages){
         console.log("message error");
       }
-      setAllChats(messages.data.data.all_message);
+      const res_data = messages.data.data.all_message ? messages.data.data.all_message : [];
+      setAllChats(res_data);
       
     }
 
@@ -868,7 +869,8 @@ const Game = () => {
 
             {/*   Chats are here */}
             <div className="chats_container overflow-auto">
-              {allChats?.map((ele, i) => (
+              {
+               allChats?.map((ele, i) => (
                 <div
                   className={
                     `chat ` +

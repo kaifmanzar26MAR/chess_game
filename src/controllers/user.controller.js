@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
+import { getReceiverSocketId, io } from "../connections/socket.io.js";
 const default_board = [
   [
     {
@@ -224,7 +225,16 @@ const loginAndUserMapping = asyncHandler(async (req, res) => {
       user.board = string_board; 
 
       await Promise.all([user.save(), unpaired_user.save()]);
+      const receiverSocketId = getReceiverSocketId(unpaired_user._id);
+    
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit("updatedUser");
+      }
     }
+
+    io.emit("login", user._id);
+
+
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
       user._id
@@ -266,6 +276,7 @@ const currentUser = asyncHandler(async (req, res) => {
 const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndDelete(req.user._id);
   if(req.user.opponent){
+    const receiverSocketId = getReceiverSocketId(req.user.opponent._id);
     await User.findByIdAndUpdate(req.user.opponent._id,
       {
         $unset:{
@@ -278,6 +289,9 @@ const logoutUser = asyncHandler(async (req, res) => {
         }
       }
     );
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("updatedUser");
+    }
   }
   
 
@@ -310,6 +324,12 @@ const setTurn = asyncHandler(async (req, res) => {
   user2.board = board;
 
   await Promise.all([user1.save(), user2.save()]);
+
+  const receiverSocketId = getReceiverSocketId(user1.opponent._id);
+  
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("updatedUser");
+    }
 
   return res.status(200).json(new ApiResponse(201, "Turn updated"));
 });

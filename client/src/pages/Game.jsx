@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { getCurrentUser, updateTurn, logout } from "../hooks/userHooks";
 import axios from "axios";
+import { useListionMessage, useListionUserUpdate } from "../hooks/useListing";
 const Game = () => {
-  const [user, setUser] = useState(null);
+  
+  const {user, setUser} = useListionUserUpdate();
   const [selectedPiece, setSelectedPiece] = useState({ i: null, j: null });
-  const [currentTurn, setCurrentTurn] = useState(null);
+  const {currentTurn, setCurrentTurn} = useListionUserUpdate();
   const [updateResponse, setUpdateResponse] = useState(null);
   const [validPathArray, setValidPathArray] = useState([]);
   const default_board = [
@@ -126,9 +128,9 @@ const Game = () => {
     ],
   ];
 
-  const [board, setBoard] = useState(default_board);
+  const {board, setBoard} = useListionUserUpdate();
 
-  const [allChats, setAllChats] = useState([]);
+  const {allChats, setAllChats} =useListionMessage();
 
   //* This function clear the hilighted path
   const clearPathMarks = () => {

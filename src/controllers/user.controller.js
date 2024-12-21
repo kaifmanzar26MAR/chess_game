@@ -265,18 +265,21 @@ const currentUser = asyncHandler(async (req, res) => {
 
 const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndDelete(req.user._id);
-  await User.findByIdAndUpdate(req.user.opponent._id,
-    {
-      $unset:{
-        opponent: 1,
-        color:1,
-        turn:1,
-      },
-      $set:{
-        board: default_board,
+  if(req.user.opponent){
+    await User.findByIdAndUpdate(req.user.opponent._id,
+      {
+        $unset:{
+          opponent: 1,
+          color:1,
+          turn:1,
+        },
+        $set:{
+          board: default_board,
+        }
       }
-    }
-  );
+    );
+  }
+  
 
   const options = {
     httpOnly: true,

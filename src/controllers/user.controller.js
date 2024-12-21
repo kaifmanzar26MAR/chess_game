@@ -340,16 +340,35 @@ const game_over_message = asyncHandler(async (req, res)=>{
   if(!userId || !opponentId){
     throw new ApiError("No user or Opponent!");
   }
-  const message = req.body;
+  const {message, board} = req.body;
 
   if(!message){
     throw new ApiError("No Game over message found!!");
   }
 
+  //*resetting the board
+  const user1 = req.user;
+  const user2 = await User.findOne({ _id: opponentId });
+
+  const next_trun = user2._id;
+
+  user1.turn = next_trun;
+  user2.turn = next_trun;
+
+  user1.board = board;
+  user2.board = board;
+
+  await Promise.all([user1.save(), user2.save()]);
+
+
   const receiverSocketId = getReceiverSocketId(opponentId);
+  const senderSocketId = getReceiverSocketId(userId);
   
   if (receiverSocketId) {
-    io.to(receiverSocketId).emit("game_over_message", message);
+    io.to(receiverSocketId).emit("game_over_message", message.losser_message);
+  }
+  if(userId){
+    io.to(senderSocketId).emit("game_over_message", message.winner_message);
   }
 
   return res.status(201).json(new ApiResponse(200, message, "message sent to opponete"));

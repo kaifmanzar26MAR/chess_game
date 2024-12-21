@@ -612,17 +612,17 @@ const Game = () => {
 
   //*game over message show
   const GameOverMessageShow = async (winner, reason) =>{
-    let winner_message = `${winner} won the game!!. `;
-
+    let losser_message = `Game Over!, ${winner} won the game!!. `;
+    let winner_message = `Game Over!, You won the game!!.`;
     if(reason == "king_killer"){
-      winner_message += "He Kill's your King!!";
+      losser_message += "He Kill's your King!!";
     }else if(reason == "check_mate"){
-      winner_message += "He check-mate you!";
+      losser_message += "He check-mate you!";
     }else if(reason == "time_out"){
-      winner_message += "You have taken very long time to take your move!";
+      losser_message += "You have taken very long time to take your move!";
     }
 
-    const response = await axios.post('http://localhost:9000/user/game_over',{message : winner_message},
+    const response = await axios.post('http://localhost:9000/user/game_over',{message : {losser_message, winner_message}, board: default_board},
       {
         withCredentials: true,
         headers: {
@@ -679,10 +679,10 @@ const Game = () => {
             ? user.username
             : user.opponent.username);
           GameOverMessageShow(winner, "king_killer");
-          alert(
-            "Game Over!! " + winner + ", Won the Game!!"
-          );
-          resetBoard();
+          // alert(
+          //   "Game Over!! " + winner + ", Won the Game!!"
+          // );
+          // resetBoard();
           // setUpdateResponse(updateTurn());
         } else {
           board[i][j] = board[prev_i][prev_j];
@@ -798,7 +798,7 @@ const Game = () => {
       return;
     }
     alert(gameOverMessage);
-    setBoard(default_board);
+    window.location.reload();
     return ()=>{}
   },[gameOverMessage, setGameOverMessage])
 

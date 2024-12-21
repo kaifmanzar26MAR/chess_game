@@ -165,10 +165,8 @@ const gameOverListioner = () =>{
   const [gameOverMessage, setGameOverMessage] = useState("");
   useEffect(()=>{
     socket?.on("game_over_message", (message)=>{
-      console.log(message.message);
-      alert(
-        message.message
-      );
+      console.log(message);
+      setGameOverMessage(message)
     })
   }, [socket])
   return {gameOverMessage, setGameOverMessage};

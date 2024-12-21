@@ -334,7 +334,29 @@ const setTurn = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(201, "Turn updated"));
 });
 
-export { loginAndUserMapping, currentUser, logoutUser, setTurn };
+const game_over_message = asyncHandler(async (req, res)=>{
+  const userId = req.user._id;
+  const opponentId = req.user?.opponent._id;
+  if(!userId || !opponentId){
+    throw new ApiError("No user or Opponent!");
+  }
+  const message = req.body;
+
+  if(!message){
+    throw new ApiError("No Game over message found!!");
+  }
+
+  const receiverSocketId = getReceiverSocketId(opponentId);
+  
+  if (receiverSocketId) {
+    io.to(receiverSocketId).emit("game_over_message", message);
+  }
+
+  return res.status(201).json(new ApiResponse(200, message, "message sent to opponete"));
+
+})
+
+export { loginAndUserMapping, currentUser, logoutUser, setTurn, game_over_message };
 
 // const getUserById = asyncHandler(async (req, res) => {
 //   console.log("func arrive");

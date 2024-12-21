@@ -160,4 +160,18 @@ const useListionUserUpdate = () =>{
     return {user, setUser, board, setBoard, currentTurn, setCurrentTurn}
 }
 
-export  {useListionMessage, useListionUserUpdate};
+const gameOverListioner = () =>{
+  const {socket} = useSocketContext();
+  const [gameOverMessage, setGameOverMessage] = useState("");
+  useEffect(()=>{
+    socket?.on("game_over_message", (message)=>{
+      console.log(message.message);
+      alert(
+        message.message
+      );
+    })
+  }, [socket])
+  return {gameOverMessage, setGameOverMessage};
+}
+
+export  {useListionMessage, useListionUserUpdate, gameOverListioner};

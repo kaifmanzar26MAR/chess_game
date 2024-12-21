@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getCurrentUser, updateTurn, logout } from "../hooks/userHooks";
 import axios from "axios";
-import { useListionMessage, useListionUserUpdate } from "../hooks/useListing";
+import { gameOverListioner, useListionMessage, useListionUserUpdate } from "../hooks/useListing";
 const Game = () => {
   
   const {user, setUser} = useListionUserUpdate();
@@ -9,6 +9,7 @@ const Game = () => {
   const {currentTurn, setCurrentTurn} = useListionUserUpdate();
   const [updateResponse, setUpdateResponse] = useState(null);
   const [validPathArray, setValidPathArray] = useState([]);
+  
   const default_board = [
     [
       {
@@ -129,7 +130,7 @@ const Game = () => {
   ];
 
   const {board, setBoard} = useListionUserUpdate();
-
+  const {gameOverMessage, setGameOverMessage} = gameOverListioner();
   const {allChats, setAllChats} =useListionMessage();
 
   //* This function clear the hilighted path
@@ -604,9 +605,34 @@ const Game = () => {
   };
 
   //*Resetting the board
-  const resetBoard = () => {
+  const resetBoard = async () => {
     setBoard(default_board);
+    await updateTurn(default_board);
   };
+
+  //*game over message show
+  const GameOverMessageShow = async (winner, reason) =>{
+    let winner_message = `${winner} won the game!!. `;
+
+    if(reason == "king_killer"){
+      winner_message += "He Kill's your King!!";
+    }else if(reason == "check_mate"){
+      winner_message += "He check-mate you!";
+    }else if(reason == "time_out"){
+      winner_message += "You have taken very long time to take your move!";
+    }
+
+    const response = await axios.post('http://localhost:9000/user/game_over',{message : winner_message},
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    if(!response){
+      console.log("Unable to send game over message!");
+    }
+  }
 
   //* This function handle the action on move
   const action = async (i, j) => {
@@ -649,10 +675,12 @@ const Game = () => {
         // if both of opposit color
         if (board[i][j].name === "King") {
           console.log(board[i][j].color, "king dead... Game over");
-          let message = alert(
-            "Game Over!! " + board[prev_i][prev_j].color === user.color
-              ? user.username
-              : user.opponent.username + ", Won the Game!!"
+          const winner = (board[i][j].color != user.color
+            ? user.username
+            : user.opponent.username);
+          GameOverMessageShow(winner, "king_killer");
+          alert(
+            "Game Over!! " + winner + ", Won the Game!!"
           );
           resetBoard();
           // setUpdateResponse(updateTurn());
@@ -764,6 +792,15 @@ const Game = () => {
     fetchUser();
     fetchMessage();
   }, [updateResponse]);
+
+  useEffect(()=>{
+    if(!gameOverMessage && gameOverMessage.trim() == ""){
+      return;
+    }
+    alert(gameOverMessage);
+    setBoard(default_board);
+    return ()=>{}
+  },[gameOverMessage, setGameOverMessage])
 
   //* Show loading if no user persent
   if (!user) {

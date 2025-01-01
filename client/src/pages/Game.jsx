@@ -867,12 +867,11 @@ const Game = () => {
 
           {/*   Time counter */}
           <div className="turn_cont flex items-center justify-center flex-col text-black bg-slate-200 rounded">
-            <div
+            {/* <div
               className="timmer text-center text-5xl font-bold"
               id="time_show"
             >
-              0:59
-            </div>
+            </div> */}
             <p
               className={`turn_box font-semibold ${
                 user.turn.username === user.username
